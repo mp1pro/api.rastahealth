@@ -1,2 +1,2 @@
-# api.rastahealth
+# api.rastahealth sync test
 Server REST API
