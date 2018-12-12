@@ -26,7 +26,7 @@ app.use('/', router);
 // test route to make sure everything is working (accessed at GET http://localhost:8082)
 router.get('/', function(req, res) {
     //res.json({ message: 'hooray! welcome to our api!' });
-    res.send('HELLO WORLD\n');
+    res.send('HELLO WORLD TEST1\n');
 });
 
 // START THE SERVER
