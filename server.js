@@ -23,11 +23,53 @@ let router = express.Router();
 // register the router so it can be used
 app.use('/', router);
 
+//import the database
+import db from './models/db';
+
+//import the schema
+//import todo from './models/schema';
+
 // test route to make sure everything is working (accessed at GET http://localhost:8082)
 router.get('/', function(req, res) {
     //res.json({ message: 'hooray! welcome to our api!' });
-    res.send('HELLO WORLD TEST1\n');
+    //res.send('HELLO WORLD TEST1\n');
+    res.status(200).send({
+        success: 'true',
+        message: 'todos retrieved successfully',
+        todos: db
+    })
 });
+
+//test post requests by adding todos
+router.post('/addTodo', (req, res) => {
+    if(!req.body.title) {
+        return res.status(400).send({
+            success: 'false',
+            message: 'title is required'
+        });
+    } else if(!req.body.description) {
+        return res.status(400).send({
+            success: 'false',
+            message: 'description is required'
+        });
+    }
+    let count = {
+        nexttodoId: 1
+    };
+
+    const todo = {
+        id: count.nexttodoId++,
+        title: req.body.title,
+        description: req.body.description
+    }
+    db.push(todo);
+    return res.status(201).send({
+        success: 'true',
+        message: 'todo added successfully',
+        todo
+    })
+});
+
 
 // START THE SERVER
 app.listen(port, hostname, () => {
