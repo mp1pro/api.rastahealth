@@ -29,6 +29,9 @@ import db from './models/db';
 //import the schema
 //import todo from './models/schema';
 
+//initiate count
+let count = 0;
+
 // test route to make sure everything is working (accessed at GET http://localhost:8082)
 router.get('/', function(req, res) {
     //res.json({ message: 'hooray! welcome to our api!' });
@@ -53,12 +56,9 @@ router.post('/addTodo', (req, res) => {
             message: 'description is required'
         });
     }
-    let count = {
-        nexttodoId: 1
-    };
 
     const todo = {
-        id: count.nexttodoId++,
+        id: count++,//db.length + 1,
         title: req.body.title,
         description: req.body.description
     }
@@ -70,6 +70,26 @@ router.post('/addTodo', (req, res) => {
     })
 });
 
+router.delete('/:id', (req, res) => {
+    const id = parseInt(req.params.id, 10);
+
+
+    db.map((todo,index)=>{
+        if(todo.id===id){
+            db.splice(index, 1);
+            return res.status(200).send({
+                success: 'true',
+                message: 'Todo deleted successfuly',
+            });
+        }
+    });
+
+    return res.status(404).send({
+        success: 'false',
+        message: 'todo not found',
+    });
+
+});
 
 // START THE SERVER
 app.listen(port, hostname, () => {
