@@ -58,10 +58,14 @@ router.post('/addTodo', (req, res) => {
     }
 
     const todo = {
-        id: count++,//db.length + 1,
+        // return id # based on db length
+        id: db.length + 1,
+        // grab title
         title: req.body.title,
+        // grab description
         description: req.body.description
     }
+    // push the to-do to the db
     db.push(todo);
     return res.status(201).send({
         success: 'true',
@@ -70,10 +74,13 @@ router.post('/addTodo', (req, res) => {
     })
 });
 
+// delete based on id #
 router.delete('/:id', (req, res) => {
+
+    //grab id as a number
     const id = parseInt(req.params.id, 10);
 
-
+    // loop through db to find id #
     db.map((todo,index)=>{
         if(todo.id===id){
             db.splice(index, 1);
@@ -89,6 +96,62 @@ router.delete('/:id', (req, res) => {
         message: 'todo not found',
     });
 
+});
+
+// update info based on id #
+router.put('/:id', (req, res) => {
+
+    //grab id as a number
+    const id = parseInt(req.params.id, 10);
+
+    let todoFound;
+    let itemIndex;
+
+    //loop through all todos
+    db.map((todo,index)=>{
+        if(todo.id === id){
+            todoFound = todo;
+            itemIndex = index;
+        }
+    });
+
+    // check if to do exist
+    if (!todoFound) {
+        return res.status(404).send({
+            success: 'false',
+            message: 'todo not found',
+        });
+    }
+
+    // check if each item in to-do exist
+    if (!req.body.title) {
+        return res.status(400).send({
+            success: 'false',
+            message: 'title is required',
+        });
+    } else if (!req.body.description) {
+        return res.status(400).send({
+            success: 'false',
+            message: 'description is required',
+        });
+    }
+
+    // updated to-do schema
+    const updatedTodo = {
+        id: todoFound.id,
+        title: req.body.title || todoFound.title,
+        description: req.body.description || todoFound.description,
+    };
+
+    // update to-do
+    db.splice(itemIndex, 1, updatedTodo);
+
+    // return success
+    return res.status(201).send({
+        success: 'true',
+        message: 'todo added successfully',
+        updatedTodo,
+    });
 });
 
 // START THE SERVER
