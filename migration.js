@@ -46,22 +46,30 @@ class Database {
 // create instance of database
 const database = new Database( dbconfig );
 
-let dbExist;
+let dbExist, tableExist;
 
 //implicitly check if database exist
 database.query("SHOW DATABASES LIKE 'rhdb'")
 .then((rows)=>{
-    console.log(rows)
     dbExist = rows;
     if(dbExist){
-        console.log("Database closed because it already exist");
+        console.log("use db")
+        return database.query("USE rhdb")
+
+    }
+})
+.then((rows)=>{
+    //dbExist = rows;
+    if(rows){
+        console.log("db existed")
+        return database.query("CREATE TABLE articles (name VARCHAR(255), address VARCHAR(255))")
+    }
+}).then((rows)=>{
+    tableExist = rows;
+    if(tableExist){
+        console.log("Table created successfully")
         return database.close();
-    }
-    else{
-        console.log("Create rhdb database");
-        return database.query("CREATE DATABASE IF NOT EXISTS `rhdb`");
-    }
-});
+    }});
 //if databases does not exist
 /*database.query("CREATE DATABASE IF NOT EXISTS `rhdb`", function (err, resolve) {
     if (err) throw err;
