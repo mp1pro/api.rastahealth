@@ -6,11 +6,14 @@
 import mysql from 'mysql';
 
 // conect to mysql
-let con = mysql.createConnection({
+
+//create config schema
+let dbconfig = {
     host: "localhost",
     user: "root",
     password: "test"
-});
+};
+let con = mysql.createConnection(dbconfig);
 
 // test connection
 con.connect(function(err) {
