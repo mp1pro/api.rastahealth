@@ -31,11 +31,13 @@ class Database {
     }
 
     close() {
+
         return new Promise( ( resolve, reject ) => {
             this.connection.end( err => {
                 if ( err )
                     return reject( err );
                 resolve();
+                console.log("Database closed from class")
             } );
         } );
     }
@@ -44,14 +46,25 @@ class Database {
 // create instance of database
 const database = new Database( dbconfig );
 
+let dbExist;
+
+//implicitly check if database exist
+database.query("SHOW DATABASES LIKE 'rhdb'")
+.then((rows)=>{
+    console.log(rows)
+    dbExist = rows;
+    if(dbExist){
+        console.log("Database closed because it already exist")
+        return database.close();
+    }
+});
+//if databases does not exist
+/*database.query("CREATE DATABASE IF NOT EXISTS `rhdb`", function (err, resolve) {
+    if (err) throw err;
+    console.log(resolve);
+});*/
 
 // test connection
-database.query("CREATE DATABASE IF NOT EXISTS `rhdb`", function (err, resolve) {
-    if (err) throw err;
-    console.log("Database created");
-});
-
-
 /*con.connect(function(err) {
     if (err) throw err;
     console.log("Connected!");
