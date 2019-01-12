@@ -54,8 +54,12 @@ database.query("SHOW DATABASES LIKE 'rhdb'")
     console.log(rows)
     dbExist = rows;
     if(dbExist){
-        console.log("Database closed because it already exist")
+        console.log("Database closed because it already exist");
         return database.close();
+    }
+    else{
+        console.log("Create rhdb database");
+        return database.query("CREATE DATABASE IF NOT EXISTS `rhdb`");
     }
 });
 //if databases does not exist
