@@ -46,7 +46,7 @@ class Database {
 // create instance of database
 const database = new Database( dbconfig );
 
-let dbExist, tableExist;
+let dbExist, tableExist, userExist;
 
 //implicitly check if database exist
 database.query("SHOW DATABASES LIKE 'rhdb'")
@@ -74,36 +74,70 @@ database.query("SHOW DATABASES LIKE 'rhdb'")
     console.log("check if table exists",tableExist);
     if(tableExist.length<1){
         //let True = 'true';
-        let sqlTable=`CREATE TABLE articles (
+        let sqlArticle=`CREATE TABLE articles (
                             id int(5) unsigned zerofill NOT NULL AUTO_INCREMENT PRIMARY KEY,
                             post_status BOOLEAN NOT NULL DEFAULT true,
-                            post_title VARCHAR(255), 
+                            post_title VARCHAR(255) NOT NULL, 
                             summary VARCHAR(255),
                             post_content TEXT NOT NULL,
                             post_type VARCHAR(255) NOT NULL DEFAULT 'article',
                             date datetime NOT NULL,
                             last_updated datetime NOT NULL
                         )`;
-        return database.query(sqlTable)
+        return database.query(sqlArticle)
             .then(row=>{
-                console.log("table created");
-                database.close().then(()=>{
+                console.log("article table created");
+                /*database.close().then(()=>{
                     process.on('exit', function(code) {
                         return console.log(`exit node with code ${code}`);
                     });
-                });
+                });*/
             });
     }
     else{
-        console.log("table already existed");
-        database.close().then(()=>{
+        console.log("article table already existed");
+        /*database.close().then(()=>{
             process.on('exit', function(code) {
                 return console.log(`exit node with code ${code}`);
             });
-        });
+        });*/
     }
 
-})/*.then((rows)=>{
+}).then((rows)=>{
+    return database.query("SHOW TABLES LIKE 'users'");
+}).then((rows)=>{
+    userExist = rows;
+    console.log("check if user exists",userExist);
+    if(userExist.length<1){
+        let sqlUser=`CREATE TABLE users (
+                            id int(5) unsigned zerofill NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                            active BOOLEAN NOT NULL DEFAULT true,
+                            username VARCHAR(255) NOT NULL, 
+                            email VARCHAR(255) NOT NULL,
+                            user_type VARCHAR(255) NOT NULL DEFAULT 'author',
+                            hash varchar(255)NOT NULL,
+                            date datetime NOT NULL,
+                            last_updated datetime NOT NULL
+                        )`;
+        return database.query(sqlUser)
+            .then(row=>{
+                console.log("user table created");
+                database.close().then(()=>{
+                     process.on('exit', function(code) {
+                        return console.log(`exit node with code ${code}`);
+                     });
+                });
+            });
+    }else{
+        console.log("user table already existed");
+        database.close().then(()=>{
+             process.on('exit', function(code) {
+                return console.log(`exit node with code ${code}`);
+             });
+        });
+    }
+});
+/*.then((rows)=>{
     tableExist = rows;
     if(tableExist){
         console.log("Table created successfully")
