@@ -52,24 +52,52 @@ let dbExist, tableExist;
 database.query("SHOW DATABASES LIKE 'rhdb'")
 .then((rows)=>{
     dbExist = rows;
-    if(dbExist){
-        console.log("use db")
-        return database.query("USE rhdb")
+    console.log("test db",dbExist.length);
+    if(dbExist.length > 0){
+        console.log("use db");
+        database.query("USE rhdb");
 
+    }
+    else{
+        console.log("create db")
+        return database.query("CREATE DATABASE IF NOT EXISTS `rhdb`").then(rows =>{
+            return database.query("USE rhdb");
+            }
+        );
     }
 })
 .then((rows)=>{
-    //dbExist = rows;
-    if(rows){
-        console.log("db existed")
+    return database.query("SHOW TABLES LIKE 'articles'");
+})
+.then((rows)=>{
+    tableExist = rows;
+    console.log("check if table exists",tableExist);
+    if(tableExist.length<1){
         return database.query("CREATE TABLE articles (name VARCHAR(255), address VARCHAR(255))")
+            .then(row=>{
+                console.log("table created");
+                database.close().then(()=>{
+                    process.on('exit', function(code) {
+                        return console.log(`exit node with code ${code}`);
+                    });
+                });
+            });
     }
-}).then((rows)=>{
+    else{
+        console.log("table already existed");
+        database.close().then(()=>{
+            process.on('exit', function(code) {
+                return console.log(`exit node with code ${code}`);
+            });
+        });
+    }
+
+})/*.then((rows)=>{
     tableExist = rows;
     if(tableExist){
         console.log("Table created successfully")
         return database.close();
-    }});
+    }});*/
 //if databases does not exist
 /*database.query("CREATE DATABASE IF NOT EXISTS `rhdb`", function (err, resolve) {
     if (err) throw err;
