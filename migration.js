@@ -73,7 +73,18 @@ database.query("SHOW DATABASES LIKE 'rhdb'")
     tableExist = rows;
     console.log("check if table exists",tableExist);
     if(tableExist.length<1){
-        return database.query("CREATE TABLE articles (name VARCHAR(255), address VARCHAR(255))")
+        //let True = 'true';
+        let sqlTable=`CREATE TABLE articles (
+                            id int(5) unsigned zerofill NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                            post_status BOOLEAN NOT NULL DEFAULT true,
+                            post_title VARCHAR(255), 
+                            summary VARCHAR(255),
+                            post_content TEXT NOT NULL,
+                            post_type VARCHAR(255) NOT NULL DEFAULT 'article',
+                            date datetime NOT NULL,
+                            last_updated datetime NOT NULL
+                        )`;
+        return database.query(sqlTable)
             .then(row=>{
                 console.log("table created");
                 database.close().then(()=>{
