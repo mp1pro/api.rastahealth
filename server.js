@@ -50,10 +50,20 @@ con.connect(function(err) {
 });
 //****mySQL-end****//
 
+// also use routes for users
+// make route post for users /:admin
+
 // test route to make sure everything is working (accessed at GET http://localhost:8082)
 router.get('/', function(req, res) {
     //res.json({ message: 'hooray! welcome to our api!' });
     //res.send('HELLO WORLD TEST1\n');
+
+    // get with article /:params
+    // fetch article in mysql
+    // return article
+    // ensure its in json format
+    // send data
+
     res.status(200).send({
         success: 'true',
         message: 'todos retrieved successfully',
@@ -62,7 +72,12 @@ router.get('/', function(req, res) {
 });
 
 //test post requests by adding todos
-router.post('/addTodo', (req, res) => {
+router.post('/addArticle/:title', (req, res) => {
+    // add articles
+    // confirm post data
+    // then insert into mysql articles table
+    // send success
+    console.log(req);
     if(!req.body.title) {
         return res.status(400).send({
             success: 'false',
@@ -78,22 +93,28 @@ router.post('/addTodo', (req, res) => {
     const todo = {
         // return id # based on db length
         id: db.length + 1,
+        //param title
+        ptitle: req.params.title,
         // grab title
         title: req.body.title,
         // grab description
         description: req.body.description
-    }
+    };
     // push the to-do to the db
     db.push(todo);
-    return res.status(201).send({
-        success: 'true',
-        message: 'todo added successfully',
-        todo
-    })
+    if(req) {
+        return res.status(201).send({
+            success: 'true',
+            message: 'todo added successfully',
+            todo
+        })
+    }
 });
 
 // delete based on id #
 router.delete('/:id', (req, res) => {
+
+    // find article and delete from articles mysql
 
     //grab id as a number
     const id = parseInt(req.params.id, 10);
@@ -118,6 +139,11 @@ router.delete('/:id', (req, res) => {
 
 // update info based on id #
 router.put('/:id', (req, res) => {
+
+    // use article name as /:param
+    // find article
+    // update fields
+    // return confirmation
 
     //grab id as a number
     const id = parseInt(req.params.id, 10);

@@ -74,6 +74,7 @@ database.query("SHOW DATABASES LIKE 'rhdb'")
     console.log("check if table exists",tableExist);
     if(tableExist.length<1){
         //let True = 'true';
+        //ADD USERNAME
         let sqlArticle=`CREATE TABLE articles (
                             id int(5) unsigned zerofill NOT NULL AUTO_INCREMENT PRIMARY KEY,
                             post_status BOOLEAN NOT NULL DEFAULT true,
