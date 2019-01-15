@@ -37,17 +37,47 @@ let count = 0;
 import mysql from 'mysql';
 
 // conect to mysql
-let con = mysql.createConnection({
+// conect to mysql
+
+//create config schema
+let dbconfig = {
     host: "localhost",
     user: "root",
     password: "test"
-});
+};
+//let con = mysql.createConnection(dbconfig);
 
-// test connection
-con.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-});
+//
+class Database {
+    constructor( config ) {
+        this.connection = mysql.createConnection( config );
+    }
+    query( sql, args ) {
+        return new Promise( ( resolve, reject ) => {
+            this.connection.query( sql, args, ( err, rows ) => {
+                if ( err )
+                    return reject( err );
+                resolve( rows );
+            } );
+        } );
+    }
+
+    close() {
+
+        return new Promise( ( resolve, reject ) => {
+            this.connection.end( err => {
+                if ( err )
+                    return reject( err );
+                resolve();
+                console.log("Database closed from class")
+            } );
+        } );
+    }
+}
+
+// create instance of database
+const database = new Database( dbconfig );
+
 //****mySQL-end****//
 
 // also use routes for users
@@ -77,8 +107,9 @@ router.post('/addArticle/:title', (req, res) => {
     // confirm post data
     // then insert into mysql articles table
     // send success
-    console.log(req);
-    if(!req.body.title) {
+    //console.log(req);
+
+    /*if(!req.body.title) {
         return res.status(400).send({
             success: 'false',
             message: 'title is required'
@@ -88,9 +119,9 @@ router.post('/addArticle/:title', (req, res) => {
             success: 'false',
             message: 'description is required'
         });
-    }
+    }*/
 
-    const todo = {
+/*    const todo = {
         // return id # based on db length
         id: db.length + 1,
         //param title
@@ -99,16 +130,67 @@ router.post('/addArticle/:title', (req, res) => {
         title: req.body.title,
         // grab description
         description: req.body.description
+    };*/
+
+    const articles = {
+        // return id # based on db length
+        id: db.length + 1,
+        //param title
+        ptitle: req.params.title,
+        // grab title
+        title: req.body.title,
+        // grab summary
+        // calculate summary from post content
+        summary: req.body.summary,
+        // grab post_content
+        post_content: req.body.post_content,
+        // grab post_type
+        post_type: req.body.post_type,
+        //grab date
+        // calculate date here maybe
+        date: req.body.date
     };
+
     // push the to-do to the db
-    db.push(todo);
-    if(req) {
+    db.push(articles);
+    //sql insert
+    let inArticle = `INSERT INTO articles (
+                            post_status, 
+                            post_title, 
+                            summary, 
+                            post_content, 
+                            post_type, 
+                            date
+                        ) 
+                        VALUES (
+                            DEFAULT, 
+                            "${req.params.title}",
+                            "${req.body.summary}",
+                            "${req.body.post_content}",
+                            DEFAULT,
+                            NOW()
+                        )`;
+    database.query("USE rhdb")
+    .then((rows)=> {
+        return database.query(inArticle)
+    })
+    .then((rows,err)=>{
+        if (err) throw err;
+        console.log("1 record inserted");
+
+        return res.status(201).send({
+            success: 'true',
+            message: 'todo added successfully',
+            articles
+        })
+    });
+    /*if(req) {
         return res.status(201).send({
             success: 'true',
             message: 'todo added successfully',
             todo
         })
-    }
+    }*/
 });
 
 // delete based on id #
