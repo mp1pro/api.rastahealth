@@ -47,7 +47,7 @@ let dbconfig = {
 };
 //let con = mysql.createConnection(dbconfig);
 
-//
+// class Database Promise
 class Database {
     constructor( config ) {
         this.connection = mysql.createConnection( config );
@@ -84,7 +84,7 @@ const database = new Database( dbconfig );
 // make route post for users /:admin
 
 // test route to make sure everything is working (accessed at GET http://localhost:8082)
-router.get('/', function(req, res) {
+router.get('/articles', function(req, res) {
     //res.json({ message: 'hooray! welcome to our api!' });
     //res.send('HELLO WORLD TEST1\n');
 
@@ -93,12 +93,28 @@ router.get('/', function(req, res) {
     // return article
     // ensure its in json format
     // send data
+    
+    let getArticles = `SELECT * FROM articles`;
 
-    res.status(200).send({
+    database.query("USE rhdb")
+    .then((rows)=> {
+        return database.query(getArticles)
+    })
+    .then((rows,err)=>{
+        if (err) throw err;
+        console.log("rows returned");
+
+        return res.status(201).send({
+            success: 'true',
+            message: 'todo added successfully',
+            articles: rows
+        })
+    });
+    /*res.status(200).send({
         success: 'true',
         message: 'todos retrieved successfully',
         todos: db
-    })
+    })*/
 });
 
 //test post requests by adding todos
