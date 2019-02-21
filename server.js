@@ -138,7 +138,7 @@ router.post('/addArticle/:title', (req, res) => {
         //param title
         ptitle: req.params.title,
         // grab title
-        title: req.body.title,
+        post_title: req.body.post_title,
         // grab summary
         // calculate summary from post content
         summary: req.body.summary,
@@ -148,11 +148,13 @@ router.post('/addArticle/:title', (req, res) => {
         post_type: req.body.post_type,
         //grab date
         // calculate date here maybe
-        date: req.body.date
+        date: req.body.date,
+
+        test: 'tester4'
     };
 
     // push the to-do to the db
-    db.push(articles);
+    //db.push(articles);
     //sql insert
     let inArticle = `INSERT INTO articles (
                             post_status, 
@@ -220,7 +222,7 @@ router.delete('/:id', (req, res) => {
 });
 
 // update info based on id #
-router.put('/:id', (req, res) => {
+router.put('/editArticle/:title', (req, res) => {
 
     // use article name as /:param
     // find article
@@ -228,7 +230,18 @@ router.put('/:id', (req, res) => {
     // return confirmation
 
     //grab id as a number
-    const id = parseInt(req.params.id, 10);
+    //const id = parseInt(req.params.id, 10);
+
+    // grab title param
+    let title = "${req.params.title}";
+    let editArticle =`UPDATE articles SET 
+        post_status = DEFAULT, 
+        position = "${req.position}",
+        wage = "${req.wage}", 
+        is_current_employee = "${req.isCurrentEmployee}"
+    WHERE title = ${req.params.title}` ;
+
+
 
     let todoFound;
     let itemIndex;
