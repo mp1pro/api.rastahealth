@@ -223,7 +223,7 @@ router.post('/addArticle/:title', (req, res) => {
 
         return res.status(201).send({
             success: 'true',
-            message: 'todo added successfully',
+            message: 'article added successfully',
             articles
         })
     });
@@ -265,6 +265,59 @@ router.delete('/:id', (req, res) => {
 // update info based on id #
 router.put('/editArticle/:title', (req, res) => {
 
+    //grab title from params
+    let title = req.params.title;
+    console.log('title up = ',title);
+
+    if(req.body.post_status === ''){console.log('empty');}
+
+    const articles = {
+        //post_status
+        post_status: req.body.post_status,
+        // grab title
+        post_title: req.params.title,
+        // grab summary
+        // calculate summary from post content
+        summary: req.body.summary,
+        // grab post_content
+        post_content: req.body.post_content,
+        // grab post_type
+        post_type: req.body.post_type,
+        //grab date
+        // calculate date here maybe
+        date: req.body.date,
+        // last update
+        last_updated: req.body.last_updated
+    };
+
+    //CREATE ARRAY FROM OBJECT WITH NON EMPTY VALUES
+    //THEN PASS THAT ARRAY INTO SET AS A SPREAD OPERATOR
+    //ref https://www.sitepoint.com/community/t/update-mysql-database-and-skip-empty-fields/247378
+
+    //COALESCE(${articles.post_status}, post_status)
+    console.log('num up = ',articles.post_status);
+
+    let upArticle = `UPDATE articles 
+                        SET 
+                            post_status = ${articles.post_status}
+                        WHERE 
+                            post_title='${title}'`;
+
+    database.query("USE rhdb")
+        .then((rows)=> {
+            return database.query(upArticle)
+        })
+        .then((rows,err)=>{
+            if (err) throw err;
+            //console.log("row updated");
+            console.log(rows.affectedRows + " record(s) updated");
+
+            return res.status(201).send({
+                success: 'true',
+                message: 'update done successfully',
+                updatedTodo: articles
+            })
+        });
     // use article name as /:param
     // find article
     // update fields
@@ -274,6 +327,15 @@ router.put('/editArticle/:title', (req, res) => {
     //const id = parseInt(req.params.id, 10);
 
     // grab title param
+    /*
+     post_title = ,
+     summary,
+     post_content,
+     post_type,
+     date,
+     last_updated
+
+
     let title = "${req.params.title}";
     let editArticle =`UPDATE articles SET 
         post_status = DEFAULT, 
@@ -331,7 +393,7 @@ router.put('/editArticle/:title', (req, res) => {
         success: 'true',
         message: 'todo added successfully',
         updatedTodo,
-    });
+    });*/
 });
 
 // START THE SERVER
