@@ -83,7 +83,7 @@ const database = new Database( dbconfig );
 // also use routes for users
 // make route post for users /:admin
 
-// test route to make sure everything is working (accessed at GET http://localhost:8082)
+// test route to make sure everything is working (accessed at GET http://localhost:8082/articles)
 router.get('/articles', function(req, res) {
     //res.json({ message: 'hooray! welcome to our api!' });
     //res.send('HELLO WORLD TEST1\n');
@@ -106,7 +106,7 @@ router.get('/articles', function(req, res) {
 
         return res.status(201).send({
             success: 'true',
-            message: 'todo added successfully',
+            message: 'articles retrieved successfully',
             articles: rows
         })
     });
@@ -115,6 +115,31 @@ router.get('/articles', function(req, res) {
         message: 'todos retrieved successfully',
         todos: db
     })*/
+});
+
+// get single article with GET url http://localhost:8082/articles/:title
+router.get('/articles/:title', function(req, res) {
+
+    //grab title from params
+    let title = req.params.title;
+    console.log('title = ',title);
+
+    let getArticle = `SELECT * FROM articles WHERE post_title='${title}'`;
+
+    database.query("USE rhdb")
+        .then((rows)=> {
+            return database.query(getArticle)
+        })
+        .then((rows,err)=>{
+            if (err) throw err;
+            console.log("single row returned");
+
+            return res.status(201).send({
+                success: 'true',
+                message: 'article retrieved successfully',
+                articles: rows
+            })
+        });
 });
 
 //test post requests by adding todos
