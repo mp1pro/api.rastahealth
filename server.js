@@ -237,11 +237,28 @@ router.post('/addArticle/:title', (req, res) => {
 });
 
 // delete based on id #
-router.delete('/:id', (req, res) => {
+router.delete('/delete/:title', (req, res) => {
 
     // find article and delete from articles mysql
+    let title = req.params.title;
 
-    //grab id as a number
+    let delArticle = `DELETE FROM articles WHERE post_title='${title}'`;
+
+    database.query("USE rhdb")
+        .then((rows)=> {
+            return database.query(delArticle)
+        })
+        .then((rows,err)=>{
+            if (err) throw err;
+            console.log("Number of records deleted: " + rows.affectedRows);
+
+            return res.status(201).send({
+                success: 'true',
+                message: 'article delete successfully',
+                articles: []
+            })
+        });
+/*    //grab id as a number
     const id = parseInt(req.params.id, 10);
 
     // loop through db to find id #
@@ -258,7 +275,7 @@ router.delete('/:id', (req, res) => {
     return res.status(404).send({
         success: 'false',
         message: 'todo not found',
-    });
+    });*/
 
 });
 
