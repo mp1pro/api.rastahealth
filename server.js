@@ -267,7 +267,7 @@ router.put('/editArticle/:title', (req, res) => {
 
     //grab title from params
     let title = req.params.title;
-    console.log('title up = ',title);
+    //console.log('title up = ',title);
 
     if(req.body.post_status === ''){console.log('empty');}
 
@@ -290,16 +290,49 @@ router.put('/editArticle/:title', (req, res) => {
         last_updated: req.body.last_updated
     };
 
-    //CREATE ARRAY FROM OBJECT WITH NON EMPTY VALUES
-    //THEN PASS THAT ARRAY INTO SET AS A SPREAD OPERATOR
+    //CREATE string FROM OBJECT WITH NON EMPTY VALUES
+
+    let conVert = (object) => {
+        let entries = Object.entries(object);
+        //entries=entries.toString();
+        let enString = '';
+        let entry = '';
+
+        const len = entries.length;
+        for(let x = 0; x<len; x++){
+
+            if(Number(entries[x][1])){
+                console.log(entries[x][1]);
+                entry = `${entries[x][1]}`
+            }
+            else{
+                entry = `'${entries[x][1]}'`
+            }
+
+            //console.log(`${entries[x][0]} = ${entries[x][1]}`);
+            let string = `${entries[x][0]} = ${entry},`;
+
+            if(entries[x][1]){
+                enString += string;
+            }
+
+        }
+        enString = enString.slice(0,-1);
+        //console.log(enString)
+
+        return enString;
+    }
+
     //ref https://www.sitepoint.com/community/t/update-mysql-database-and-skip-empty-fields/247378
 
     //COALESCE(${articles.post_status}, post_status)
-    console.log('num up = ',articles.post_status);
+    //console.log('num up = ',articles.post_status);
+    console.log(conVert(articles));
 
     let upArticle = `UPDATE articles 
                         SET 
-                            post_status = ${articles.post_status}
+                            ${conVert(articles)}
+                            ,last_updated = NOW()
                         WHERE 
                             post_title='${title}'`;
 
