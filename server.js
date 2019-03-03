@@ -142,6 +142,15 @@ router.get('/articles/:title', function(req, res) {
         });
 });
 
+//add key api via post
+router.post('/githubKey', (req, res) => {
+    return res.status(201).send({
+        success: 'true',
+        message: 'article added successfully',
+        KEY: '58fc85d17deb1e77525fad3c5a10af44d948cf88'
+    })
+});
+
 //test post requests by adding todos
 router.post('/addArticle/:title', (req, res) => {
     // add articles
