@@ -151,14 +151,14 @@ router.post('/githubKey', (req, res) => {
         .then((rows)=> {
             return database.query(getKey)
         })
-        .then((rows,err)=>{
+        .then((key,err)=>{
             if (err) throw err;
             console.log("single row returned");
 
             return res.status(201).send({
                 success: 'true',
                 message: 'key returned successfully',
-                KEY: '58fc85d17deb1e77525fad3c5a10af44d948cf88'
+                key
             })
         });
 });
